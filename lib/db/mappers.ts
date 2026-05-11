@@ -68,6 +68,7 @@ interface RelationshipRow {
   score_version: number | null;
   hype_risk: string;
   score_breakdown: Record<string, number> | null;
+  ai_assisted: boolean;
   related_companies: RelatedCompanyRow;
   sources: SourceRow[];
 }
@@ -165,5 +166,6 @@ export function mapRelationship(row: RelationshipRow): Relationship {
     hypeRisk: row.hype_risk as HypeRisk,
     sources: (row.sources ?? []).map(mapSource),
     isActive: row.is_active,
+    aiAssisted: row.ai_assisted ?? false,
   };
 }

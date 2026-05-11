@@ -1,6 +1,11 @@
 import { getPublicClient, getServerClient } from "./client";
 import { mapRelationship } from "./mappers";
-import type { Relationship } from "@/lib/types";
+import type {
+  Relationship,
+  RelationshipType,
+  RelationshipStrength,
+  HypeRisk,
+} from "@/lib/types";
 import { computeRelevanceScore } from "@/lib/scoring/compute-relevance-score";
 import { SCORING_VERSION } from "@/lib/scoring/version";
 
@@ -28,14 +33,12 @@ export async function listRelationshipsByCatalyst(
 /**
  * Recompute the relevance score for a single relationship.
  * Updates `relationships` row and appends a `score_snapshots` row.
- * Uses the service role client (server-only).
  */
 export async function recomputeAndSaveScore(
   relationshipId: string
 ): Promise<void> {
   const supabase = getServerClient();
 
-  // Fetch the relationship + its sources
   const { data: rel, error: relError } = await supabase
     .from("relationships")
     .select("*, sources(*)")
@@ -60,7 +63,6 @@ export async function recomputeAndSaveScore(
     new Date()
   );
 
-  // Update the relationship row
   const { error: updateError } = await supabase
     .from("relationships")
     .update({
@@ -72,7 +74,6 @@ export async function recomputeAndSaveScore(
 
   if (updateError) throw updateError;
 
-  // Append a score snapshot
   const { error: snapshotError } = await supabase
     .from("score_snapshots")
     .insert({
@@ -83,4 +84,96 @@ export async function recomputeAndSaveScore(
     });
 
   if (snapshotError) throw snapshotError;
+}
+
+// ── Write functions ───────────────────────────────────────────────
+
+export interface CreateRelationshipInput {
+  catalystId: string;
+  relatedCompanyId: string;
+  relationshipType: RelationshipType;
+  relationshipStrength: RelationshipStrength;
+  summary: string;
+  revenueExposurePct?: number | null;
+  lastVerifiedAt: string;
+  hypeRisk: HypeRisk;
+  aiAssisted?: boolean;
+}
+
+export async function createRelationship(
+  input: CreateRelationshipInput
+): Promise<string> {
+  const supabase = getServerClient();
+  const { data, error } = await supabase
+    .from("relationships")
+    .insert({
+      catalyst_id: input.catalystId,
+      related_company_id: input.relatedCompanyId,
+      relationship_type: input.relationshipType,
+      relationship_strength: input.relationshipStrength,
+      summary: input.summary,
+      revenue_exposure_pct: input.revenueExposurePct ?? null,
+      last_verified_at: input.lastVerifiedAt,
+      hype_risk: input.hypeRisk,
+      ai_assisted: input.aiAssisted ?? false,
+    })
+    .select("id")
+    .single();
+
+  if (error) throw error;
+  return data.id;
+}
+
+export async function updateRelationship(
+  id: string,
+  input: Partial<
+    Omit<CreateRelationshipInput, "catalystId" | "relatedCompanyId">
+  >
+): Promise<void> {
+  const supabase = getServerClient();
+  const updates: Record<string, unknown> = {};
+  if (input.relationshipType !== undefined)
+    updates.relationship_type = input.relationshipType;
+  if (input.relationshipStrength !== undefined)
+    updates.relationship_strength = input.relationshipStrength;
+  if (input.summary !== undefined) updates.summary = input.summary;
+  if (input.revenueExposurePct !== undefined)
+    updates.revenue_exposure_pct = input.revenueExposurePct;
+  if (input.lastVerifiedAt !== undefined)
+    updates.last_verified_at = input.lastVerifiedAt;
+  if (input.hypeRisk !== undefined) updates.hype_risk = input.hypeRisk;
+
+  const { error } = await supabase
+    .from("relationships")
+    .update(updates)
+    .eq("id", id);
+
+  if (error) throw error;
+
+  await recomputeAndSaveScore(id);
+}
+
+export async function deleteRelationship(id: string): Promise<void> {
+  const supabase = getServerClient();
+  const { error } = await supabase
+    .from("relationships")
+    .update({ is_active: false })
+    .eq("id", id);
+
+  if (error) throw error;
+}
+
+export async function getRelationshipById(
+  id: string
+): Promise<Relationship | null> {
+  const supabase = getPublicClient();
+  const { data, error } = await supabase
+    .from("relationships")
+    .select("*, related_companies(*), sources(*)")
+    .eq("id", id)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  if (!data) return null;
+  return mapRelationship(data);
 }

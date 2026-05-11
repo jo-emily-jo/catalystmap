@@ -16,6 +16,7 @@ describe("mapRelationship", () => {
     relevance_score: 62.4,
     score_version: 1,
     hype_risk: "medium",
+    ai_assisted: false,
     score_breakdown: {
       directScore: 60,
       revenueExposureScore: 60,
@@ -174,6 +175,7 @@ function makeRow(id: string, score: number) {
     relevance_score: score,
     score_version: 1,
     hype_risk: "low",
+    ai_assisted: false,
     score_breakdown: null,
     related_companies: {
       id: "rc-001",

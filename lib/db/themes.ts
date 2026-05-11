@@ -1,4 +1,4 @@
-import { getPublicClient } from "./client";
+import { getPublicClient, getServerClient } from "./client";
 import { mapTheme } from "./mappers";
 import type { Theme } from "@/lib/types";
 
@@ -24,4 +24,26 @@ export async function getThemeBySlug(slug: string): Promise<Theme | null> {
   if (error && error.code !== "PGRST116") throw error;
   if (!data) return null;
   return mapTheme(data);
+}
+
+export async function createTheme(input: {
+  slug: string;
+  name: string;
+  description?: string;
+  displayOrder?: number;
+}): Promise<string> {
+  const supabase = getServerClient();
+  const { data, error } = await supabase
+    .from("themes")
+    .insert({
+      slug: input.slug,
+      name: input.name,
+      description: input.description ?? null,
+      display_order: input.displayOrder ?? 0,
+    })
+    .select("id")
+    .single();
+
+  if (error) throw error;
+  return data.id;
 }

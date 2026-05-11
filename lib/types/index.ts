@@ -92,6 +92,7 @@ export interface Relationship {
   hypeRisk: HypeRisk;
   sources: Source[];
   isActive: boolean;
+  aiAssisted: boolean;
 }
 
 export interface ScoreBreakdown {

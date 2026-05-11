@@ -143,6 +143,7 @@ function hydrateRelationship(
     hypeRisk: raw.hypeRisk as HypeRisk,
     sources: raw.sources.map(hydrateSource),
     isActive: true,
+    aiAssisted: false,
   };
 }
 
