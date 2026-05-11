@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "ai",
+    "name": "AI",
+    "description": "Artificial intelligence, large language models, and frontier AI labs.",
+    "displayOrder": 10
+  },
+  {
+    "slug": "semiconductors",
+    "name": "Semiconductors",
+    "description": "Advanced chip design, memory, EUV lithography, and packaging.",
+    "displayOrder": 20
+  },
+  {
+    "slug": "space",
+    "name": "Space",
+    "description": "Launch vehicles, satellite constellations, and orbital infrastructure.",
+    "displayOrder": 30
+  },
+  {
+    "slug": "defense",
+    "name": "Defense",
+    "description": "Defense contractors, national security technology, and dual-use systems.",
+    "displayOrder": 40
+  },
+  {
+    "slug": "data-center",
+    "name": "Data center",
+    "description": "Hyperscale infrastructure, cooling, power, and networking equipment.",
+    "displayOrder": 50
+  },
+  {
+    "slug": "robotics",
+    "name": "Robotics",
+    "description": "Industrial automation, humanoid robots, and autonomous systems.",
+    "displayOrder": 60
+  },
+  {
+    "slug": "energy",
+    "name": "Energy",
+    "description": "Energy transition, nuclear, renewables, grid infrastructure, and storage.",
+    "displayOrder": 70
+  },
+  {
+    "slug": "biotech",
+    "name": "Biotech",
+    "description": "Drug discovery, genomics, CRISPR, and computational biology.",
+    "displayOrder": 80
+  }
+]

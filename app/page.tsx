@@ -1,56 +1,11 @@
 import { ThemeCard } from "@/components/theme-card";
+import { listThemes } from "@/lib/db/themes";
 
-const THEMES = [
-  {
-    name: "AI",
-    slug: "ai",
-    description:
-      "Artificial intelligence, large language models, and frontier AI labs.",
-  },
-  {
-    name: "Semiconductors",
-    slug: "semiconductors",
-    description:
-      "Advanced chip design, memory, EUV lithography, and packaging.",
-  },
-  {
-    name: "Space",
-    slug: "space",
-    description:
-      "Launch vehicles, satellite constellations, and orbital infrastructure.",
-  },
-  {
-    name: "Defense",
-    slug: "defense",
-    description:
-      "Defense contractors, national security technology, and dual-use systems.",
-  },
-  {
-    name: "Data center",
-    slug: "data-center",
-    description:
-      "Hyperscale infrastructure, cooling, power, and networking equipment.",
-  },
-  {
-    name: "Robotics",
-    slug: "robotics",
-    description:
-      "Industrial automation, humanoid robots, and autonomous systems.",
-  },
-  {
-    name: "Energy",
-    slug: "energy",
-    description:
-      "Energy transition, nuclear, renewables, grid infrastructure, and storage.",
-  },
-  {
-    name: "Biotech",
-    slug: "biotech",
-    description: "Drug discovery, genomics, CRISPR, and computational biology.",
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const themes = await listThemes();
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <h1 className="text-2xl font-medium text-[--foreground]">
@@ -62,8 +17,13 @@ export default function HomePage() {
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {THEMES.map((theme) => (
-          <ThemeCard key={theme.slug} {...theme} />
+        {themes.map((theme) => (
+          <ThemeCard
+            key={theme.slug}
+            name={theme.name}
+            slug={theme.slug}
+            description={theme.description ?? ""}
+          />
         ))}
       </div>
     </div>

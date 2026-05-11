@@ -17,8 +17,8 @@
       "id": "theme-ai-001",
       "slug": "ai",
       "name": "AI",
-      "description": "Artificial intelligence and large language models",
-      "displayOrder": 1
+      "description": "Artificial intelligence, large language models, and frontier AI labs.",
+      "displayOrder": 10
     }
   ],
   "relationships": [

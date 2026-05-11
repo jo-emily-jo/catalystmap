@@ -1,17 +1,22 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCatalystBySlug, getRelationshipsByCatalyst } from "@/lib/db/mock";
+import { getCatalystBySlug } from "@/lib/db/catalysts";
+import { listRelationshipsByCatalyst } from "@/lib/db/relationships";
 import { CatalystHeader } from "@/components/catalyst-header";
 import { RelatedCompanyTable } from "@/components/related-company-table";
 import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: { slug: string };
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const catalyst = getCatalystBySlug(params.slug);
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const catalyst = await getCatalystBySlug(params.slug);
   if (!catalyst) return { title: "Not found — CatalystMap" };
 
   return {
@@ -20,11 +25,11 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function CatalystPage({ params }: PageProps) {
-  const catalyst = getCatalystBySlug(params.slug);
+export default async function CatalystPage({ params }: PageProps) {
+  const catalyst = await getCatalystBySlug(params.slug);
   if (!catalyst) notFound();
 
-  const relationships = getRelationshipsByCatalyst(catalyst.id);
+  const relationships = await listRelationshipsByCatalyst(catalyst.id);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
