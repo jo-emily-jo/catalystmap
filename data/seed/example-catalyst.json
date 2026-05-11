@@ -1,0 +1,181 @@
+{
+  "_comment": "ILLUSTRATIVE SEED DATA — not verified investment research. The codebase must not depend on this specific catalyst.",
+  "catalyst": {
+    "id": "cat-example-001",
+    "slug": "anthropic",
+    "name": "Anthropic",
+    "country": "US",
+    "isPublic": false,
+    "shortDescription": "AI safety company building frontier large language models including the Claude family.",
+    "thesisMd": "Anthropic is one of the leading frontier AI labs, competing directly with OpenAI and Google DeepMind. Its Claude model family is widely adopted across enterprise and consumer applications.\n\nAs one of the most highly valued private AI companies, Anthropic's growth creates significant downstream effects on:\n\n- **Cloud infrastructure** providers hosting its training and inference workloads\n- **Semiconductor suppliers** whose GPUs and accelerators power model training\n- **Enterprise software** companies building on its APIs\n- **Data center operators** expanding capacity to meet AI compute demand",
+    "foundedYear": 2021,
+    "website": "https://www.anthropic.com",
+    "isActive": true
+  },
+  "themes": [
+    {
+      "id": "theme-ai-001",
+      "slug": "ai",
+      "name": "AI",
+      "description": "Artificial intelligence and large language models",
+      "displayOrder": 1
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-ex-amzn-001",
+      "relatedCompany": {
+        "id": "rc-amzn-001",
+        "ticker": "AMZN",
+        "exchange": "NASDAQ",
+        "name": "Amazon.com Inc.",
+        "country": "US",
+        "sector": "Information Technology",
+        "industry": "Internet & Direct Marketing Retail",
+        "shortDescription": "Global e-commerce and cloud computing company; AWS is a major cloud infrastructure provider."
+      },
+      "relationshipType": "investment",
+      "relationshipStrength": "direct",
+      "summary": "Amazon has made a multi-billion dollar investment in Anthropic and provides cloud infrastructure through AWS.",
+      "revenueExposurePct": null,
+      "lastVerifiedAt": "2025-12-01",
+      "relevanceScore": 83,
+      "hypeRisk": "low",
+      "sources": [
+        {
+          "id": "src-ex-amzn-001",
+          "url": "https://example.com/placeholder-amazon-anthropic-investment",
+          "title": "Amazon invests in Anthropic (placeholder)",
+          "sourceType": "official_announcement",
+          "sourceQuality": 90,
+          "accessedAt": "2025-12-01T00:00:00Z",
+          "excerpt": "Placeholder — Amazon announced a major investment in Anthropic, committing up to $4 billion."
+        }
+      ]
+    },
+    {
+      "id": "rel-ex-nvda-001",
+      "relatedCompany": {
+        "id": "rc-nvda-001",
+        "ticker": "NVDA",
+        "exchange": "NASDAQ",
+        "name": "NVIDIA Corp.",
+        "country": "US",
+        "sector": "Information Technology",
+        "industry": "Semiconductors",
+        "shortDescription": "Designs GPUs and AI accelerators used for training and inference of large language models."
+      },
+      "relationshipType": "supplier",
+      "relationshipStrength": "indirect",
+      "summary": "NVIDIA GPUs are widely used for training frontier AI models. Anthropic likely uses NVIDIA hardware through its cloud providers.",
+      "revenueExposurePct": null,
+      "lastVerifiedAt": "2025-11-15",
+      "relevanceScore": 56,
+      "hypeRisk": "medium",
+      "sources": [
+        {
+          "id": "src-ex-nvda-001",
+          "url": "https://example.com/placeholder-nvidia-ai-training",
+          "title": "NVIDIA GPU demand from AI labs (placeholder)",
+          "sourceType": "analyst_report",
+          "sourceQuality": 70,
+          "accessedAt": "2025-11-15T00:00:00Z",
+          "excerpt": "Placeholder — Analyst report discussing NVIDIA's dominant position in AI training GPU supply."
+        }
+      ]
+    },
+    {
+      "id": "rel-ex-vrt-001",
+      "relatedCompany": {
+        "id": "rc-vrt-001",
+        "ticker": "VRT",
+        "exchange": "NYSE",
+        "name": "Vertiv Holdings Co.",
+        "country": "US",
+        "sector": "Industrials",
+        "industry": "Electrical Equipment",
+        "shortDescription": "Designs and manufactures critical digital infrastructure including power and thermal management for data centers."
+      },
+      "relationshipType": "infrastructure",
+      "relationshipStrength": "indirect",
+      "summary": "Vertiv provides power and cooling infrastructure to data centers running AI workloads. The connection to Anthropic specifically is indirect — Vertiv benefits from the general AI data center buildout.",
+      "revenueExposurePct": null,
+      "lastVerifiedAt": "2025-10-01",
+      "relevanceScore": 41,
+      "hypeRisk": "medium",
+      "sources": [
+        {
+          "id": "src-ex-vrt-001",
+          "url": "https://example.com/placeholder-vertiv-ai-datacenter",
+          "title": "Data center infrastructure demand from AI (placeholder)",
+          "sourceType": "news_article",
+          "sourceQuality": 55,
+          "accessedAt": "2025-10-01T00:00:00Z",
+          "excerpt": "Placeholder — Vertiv positioned to benefit from AI-driven data center expansion."
+        }
+      ]
+    },
+    {
+      "id": "rel-ex-goog-001",
+      "relatedCompany": {
+        "id": "rc-goog-001",
+        "ticker": "GOOGL",
+        "exchange": "NASDAQ",
+        "name": "Alphabet Inc.",
+        "country": "US",
+        "sector": "Communication Services",
+        "industry": "Interactive Media & Services",
+        "shortDescription": "Parent company of Google; operates Google Cloud and DeepMind AI research lab."
+      },
+      "relationshipType": "investment",
+      "relationshipStrength": "direct",
+      "summary": "Google has invested in Anthropic and Google Cloud is one of Anthropic's cloud infrastructure partners.",
+      "revenueExposurePct": null,
+      "lastVerifiedAt": "2025-12-01",
+      "relevanceScore": 72,
+      "hypeRisk": "low",
+      "sources": [
+        {
+          "id": "src-ex-goog-001",
+          "url": "https://example.com/placeholder-google-anthropic-investment",
+          "title": "Google invests in Anthropic (placeholder)",
+          "sourceType": "news_article",
+          "sourceQuality": 55,
+          "accessedAt": "2025-12-01T00:00:00Z",
+          "excerpt": "Placeholder — Google made a significant investment in Anthropic."
+        }
+      ]
+    },
+    {
+      "id": "rel-ex-msft-001",
+      "relatedCompany": {
+        "id": "rc-msft-001",
+        "ticker": "MSFT",
+        "exchange": "NASDAQ",
+        "name": "Microsoft Corp.",
+        "country": "US",
+        "sector": "Information Technology",
+        "industry": "Software",
+        "shortDescription": "Enterprise software and cloud company; Azure is a major cloud platform. Major investor in OpenAI."
+      },
+      "relationshipType": "thematic",
+      "relationshipStrength": "indirect",
+      "summary": "Microsoft competes in the AI space primarily through its OpenAI partnership. Its enterprise AI strategy is shaped by the competitive dynamics Anthropic creates in the frontier AI market.",
+      "revenueExposurePct": null,
+      "lastVerifiedAt": "2025-10-01",
+      "relevanceScore": 28,
+      "hypeRisk": "low",
+      "sources": [
+        {
+          "id": "src-ex-msft-001",
+          "url": "https://example.com/placeholder-msft-ai-competition",
+          "title": "AI competitive landscape (placeholder)",
+          "sourceType": "blog",
+          "sourceQuality": 30,
+          "accessedAt": "2025-10-01T00:00:00Z",
+          "excerpt": "Placeholder — Analysis of competitive dynamics between major AI labs and their enterprise partners."
+        }
+      ]
+    }
+  ]
+}
