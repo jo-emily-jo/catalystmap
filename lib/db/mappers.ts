@@ -4,6 +4,7 @@ import type {
   RelatedCompany,
   Relationship,
   Source,
+  ScoreBreakdown,
   RelationshipType,
   RelationshipStrength,
   HypeRisk,
@@ -66,6 +67,7 @@ interface RelationshipRow {
   relevance_score: number | null;
   score_version: number | null;
   hype_risk: string;
+  score_breakdown: Record<string, number> | null;
   related_companies: RelatedCompanyRow;
   sources: SourceRow[];
 }
@@ -146,6 +148,7 @@ export function mapSource(row: SourceRow): Source {
 }
 
 export function mapRelationship(row: RelationshipRow): Relationship {
+  const breakdown = row.score_breakdown as ScoreBreakdown | null;
   return {
     id: row.id,
     catalystId: row.catalyst_id,
@@ -158,6 +161,7 @@ export function mapRelationship(row: RelationshipRow): Relationship {
     lastVerifiedAt: row.last_verified_at,
     relevanceScore: row.relevance_score ?? 0,
     scoreVersion: row.score_version ?? 1,
+    scoreBreakdown: breakdown ?? null,
     hypeRisk: row.hype_risk as HypeRisk,
     sources: (row.sources ?? []).map(mapSource),
     isActive: row.is_active,

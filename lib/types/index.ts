@@ -88,6 +88,7 @@ export interface Relationship {
   lastVerifiedAt: string;
   relevanceScore: number;
   scoreVersion: number;
+  scoreBreakdown?: ScoreBreakdown | null;
   hypeRisk: HypeRisk;
   sources: Source[];
   isActive: boolean;

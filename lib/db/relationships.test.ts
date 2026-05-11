@@ -16,6 +16,17 @@ describe("mapRelationship", () => {
     relevance_score: 62.4,
     score_version: 1,
     hype_risk: "medium",
+    score_breakdown: {
+      directScore: 60,
+      revenueExposureScore: 60,
+      sourceQualityScore: 72,
+      recencyScore: 80,
+      momentumScore: 50,
+      hypeRiskPenalty: 5,
+      subtotal: 67.4,
+      final: 62.4,
+      version: 1,
+    },
     related_companies: {
       id: "rc-001",
       ticker: "NVDA",
@@ -107,6 +118,26 @@ describe("mapRelationship", () => {
     const result = mapRelationship(row);
     expect(result.sources).toEqual([]);
   });
+
+  it("hydrates scoreBreakdown from score_breakdown JSONB", () => {
+    const result = mapRelationship(mockRow);
+    expect(result.scoreBreakdown).toBeDefined();
+    expect(result.scoreBreakdown?.directScore).toBe(60);
+    expect(result.scoreBreakdown?.revenueExposureScore).toBe(60);
+    expect(result.scoreBreakdown?.sourceQualityScore).toBe(72);
+    expect(result.scoreBreakdown?.recencyScore).toBe(80);
+    expect(result.scoreBreakdown?.momentumScore).toBe(50);
+    expect(result.scoreBreakdown?.hypeRiskPenalty).toBe(5);
+    expect(result.scoreBreakdown?.subtotal).toBe(67.4);
+    expect(result.scoreBreakdown?.final).toBe(62.4);
+    expect(result.scoreBreakdown?.version).toBe(1);
+  });
+
+  it("handles null score_breakdown", () => {
+    const row = { ...mockRow, score_breakdown: null };
+    const result = mapRelationship(row);
+    expect(result.scoreBreakdown).toBeNull();
+  });
 });
 
 describe("sort order", () => {
@@ -143,6 +174,7 @@ function makeRow(id: string, score: number) {
     relevance_score: score,
     score_version: 1,
     hype_risk: "low",
+    score_breakdown: null,
     related_companies: {
       id: "rc-001",
       ticker: "TEST",

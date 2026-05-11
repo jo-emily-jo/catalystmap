@@ -29,7 +29,10 @@ export function RelatedCompanyRow({
         {relationship.relationshipStrength}
       </td>
       <td className="px-3 py-3">
-        <ScoreBadge score={relationship.relevanceScore} />
+        <ScoreBadge
+          score={relationship.relevanceScore}
+          breakdown={relationship.scoreBreakdown}
+        />
       </td>
       <td className="px-3 py-3">
         <HypeRiskIndicator level={relationship.hypeRisk} />

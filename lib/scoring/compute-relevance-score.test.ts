@@ -83,22 +83,40 @@ describe("computeRelevanceScore", () => {
     expect(result.breakdown.final).toBe(0);
   });
 
-  it("is deterministic across repeated calls", () => {
-    const input = {
-      relationshipType: "supplier" as const,
-      relationshipStrength: "direct" as const,
-      revenueExposurePct: 10,
-      sourceQualities: [85, 70],
-      lastVerifiedAt: daysAgo(50),
-      hypeRisk: "low" as const,
-    };
+  it("is deterministic: 100 varied inputs produce identical hashes on two runs", () => {
+    const types = [
+      "investment",
+      "customer",
+      "supplier",
+      "partnership",
+      "infrastructure",
+      "thematic",
+      "speculative",
+    ] as const;
+    const strengths = ["direct", "indirect", "speculative"] as const;
+    const risks = ["low", "medium", "high"] as const;
 
-    const results = Array.from({ length: 100 }, () =>
-      computeRelevanceScore(input, now)
+    function buildInputs() {
+      return Array.from({ length: 100 }, (_, i) => ({
+        relationshipType: types[i % types.length],
+        relationshipStrength: strengths[i % strengths.length],
+        revenueExposurePct: i % 10 === 0 ? null : i * 0.5,
+        sourceQualities: [15 + (i % 86), 70],
+        lastVerifiedAt: daysAgo(i * 8),
+        hypeRisk: risks[i % risks.length],
+      }));
+    }
+
+    const run1 = buildInputs().map(
+      (inp) => computeRelevanceScore(inp, now).score
+    );
+    const run2 = buildInputs().map(
+      (inp) => computeRelevanceScore(inp, now).score
     );
 
-    const firstScore = results[0].score;
-    expect(results.every((r) => r.score === firstScore)).toBe(true);
+    const hash1 = JSON.stringify(run1);
+    const hash2 = JSON.stringify(run2);
+    expect(hash1).toBe(hash2);
   });
 
   it("version is always SCORING_VERSION (1)", () => {
