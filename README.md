@@ -1,5 +1,7 @@
 # CatalystMap
 
+**Live demo:** https://getcatalystmap.com
+
 A supply-chain and contract intelligence tool that maps high-attention catalyst companies — SpaceX, Anthropic, SK Hynix, NVIDIA, and others — to their publicly traded suppliers, contractors, infrastructure providers, and value-chain beneficiaries. Every relationship is typed, source-cited, and scored with a transparent, deterministic formula.
 
 **Live:** [getcatalystmap.com](https://getcatalystmap.com)
