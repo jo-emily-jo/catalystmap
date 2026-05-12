@@ -4,7 +4,7 @@ import { countCatalystsByTheme } from "@/lib/db/catalysts";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function ThemesIndexPage() {
   const [themes, counts] = await Promise.all([
     listThemes(),
     countCatalystsByTheme(),
@@ -12,13 +12,9 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
-      <h1 className="text-2xl font-medium text-[--foreground]">
-        Map the supply chain
-      </h1>
+      <h1 className="text-2xl font-medium text-[--foreground]">Themes</h1>
       <p className="mt-2 text-sm text-[--foreground-secondary]">
-        Identify publicly traded suppliers, contractors, infrastructure
-        providers, and value-chain beneficiaries of major private and foreign
-        catalyst companies — with evidence and source citations.
+        Browse market themes and the catalyst companies driving them.
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

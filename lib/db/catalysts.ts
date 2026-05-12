@@ -102,6 +102,24 @@ export async function listCatalystsByTheme(
   );
 }
 
+export async function countCatalystsByTheme(): Promise<Record<string, number>> {
+  const supabase = getPublicClient();
+  const { data, error } = await supabase
+    .from("catalyst_themes")
+    .select("theme_id, themes(slug)");
+
+  if (error) throw error;
+
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    const slug = (row.themes as unknown as { slug: string })?.slug;
+    if (slug) {
+      counts[slug] = (counts[slug] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
 // ── Write functions (service role) ────────────────────────────────
 
 export interface CreateCatalystInput {
