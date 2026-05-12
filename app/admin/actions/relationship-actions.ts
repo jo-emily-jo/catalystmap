@@ -62,9 +62,16 @@ export async function createRelationshipAction(
 
   try {
     const aiAssisted = formData.get("aiAssisted") === "true";
+    const contractValueUsd = formData.get("contractValueUsd")
+      ? Number(formData.get("contractValueUsd"))
+      : null;
+    const isGovernmentProcurement =
+      formData.get("isGovernmentProcurement") === "true";
 
     const relId = await createRelationship({
       ...result.data,
+      contractValueUsd,
+      isGovernmentProcurement,
       aiAssisted,
     });
 

@@ -3,31 +3,31 @@ import { computeDirectScore } from "./direct-score";
 import type { RelationshipType, RelationshipStrength } from "@/lib/types";
 
 const expected: [RelationshipType, RelationshipStrength, number][] = [
-  ["investment", "direct", 100],
-  ["investment", "indirect", 70],
-  ["investment", "speculative", 30],
-  ["customer", "direct", 90],
-  ["customer", "indirect", 60],
-  ["customer", "speculative", 25],
-  ["supplier", "direct", 90],
-  ["supplier", "indirect", 60],
-  ["supplier", "speculative", 25],
+  ["supplier", "direct", 100],
+  ["supplier", "indirect", 70],
+  ["supplier", "speculative", 30],
+  ["customer", "direct", 100],
+  ["customer", "indirect", 70],
+  ["customer", "speculative", 30],
+  ["infrastructure", "direct", 90],
+  ["infrastructure", "indirect", 65],
+  ["infrastructure", "speculative", 25],
   ["partnership", "direct", 80],
   ["partnership", "indirect", 55],
   ["partnership", "speculative", 25],
-  ["infrastructure", "direct", 75],
-  ["infrastructure", "indirect", 50],
-  ["infrastructure", "speculative", 20],
-  ["thematic", "direct", 50],
-  ["thematic", "indirect", 35],
-  ["thematic", "speculative", 15],
-  ["speculative", "direct", 30],
-  ["speculative", "indirect", 20],
-  ["speculative", "speculative", 10],
+  ["investment", "direct", 80],
+  ["investment", "indirect", 55],
+  ["investment", "speculative", 25],
+  ["thematic", "direct", 30],
+  ["thematic", "indirect", 20],
+  ["thematic", "speculative", 10],
+  ["speculative", "direct", 20],
+  ["speculative", "indirect", 15],
+  ["speculative", "speculative", 5],
 ];
 
-describe("computeDirectScore", () => {
-  it.each(expected)("%s × %s → %d", (type, strength, score) => {
+describe("computeDirectScore (v2)", () => {
+  it.each(expected)("%s x %s → %d", (type, strength, score) => {
     expect(computeDirectScore(type, strength)).toBe(score);
   });
 });

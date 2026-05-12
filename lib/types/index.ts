@@ -90,6 +90,8 @@ export interface Relationship {
   scoreVersion: number;
   scoreBreakdown?: ScoreBreakdown | null;
   hypeRisk: HypeRisk;
+  contractValueUsd?: number | null;
+  isGovernmentProcurement: boolean;
   sources: Source[];
   isActive: boolean;
   aiAssisted: boolean;
@@ -101,6 +103,8 @@ export interface ScoreBreakdown {
   sourceQualityScore: number;
   recencyScore: number;
   momentumScore: number;
+  contractSizeBonus: number;
+  governmentProcurementBonus: number;
   hypeRiskPenalty: number;
   subtotal: number;
   final: number;

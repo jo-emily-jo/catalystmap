@@ -26,6 +26,10 @@ This file is the persistent system context for Claude Code while working on this
 
 Do not invent synonyms. Do not call catalysts "core companies."
 
+### Counterparty / supply-chain framing
+
+The product maps suppliers, customers, contractors, infrastructure providers, and disclosed partnerships between catalyst companies and publicly traded companies. Thematic exposure is included but explicitly de-prioritized in scoring and UI copy. The product is never to be framed as a stock screener, valuation tool, financial statement aggregator, fundamental analysis platform, portfolio tracker, or trading product.
+
 ---
 
 ## Source-of-truth documents
@@ -161,6 +165,10 @@ Do **not** mark work done by saying "I've implemented X." Show the diff, paste t
 - Not a portfolio tracker
 - Not connected to any brokerage
 - Not auto-discovering catalysts in v1 — humans curate
+- Not a stock screener (no P/E, market cap, dividend yield filters)
+- Not a fundamental analysis tool (no financial statements, ratios, DCF)
+- Not a price chart / technical analysis surface
+- Not a portfolio tracker (no user positions)
 
 If a request would push the product in any of these directions, flag it before implementing.
 

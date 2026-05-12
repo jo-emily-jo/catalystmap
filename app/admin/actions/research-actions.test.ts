@@ -22,7 +22,9 @@ describe("research response parsing", () => {
           "title": "Test source"
         }
       ],
-      "hypeRisk": "low"
+      "hypeRisk": "low",
+      "contractValueUsd": 500000000,
+      "isGovernmentProcurement": true
     }
   ]
 }
@@ -36,6 +38,8 @@ describe("research response parsing", () => {
     expect(parsed.candidates[0].ticker).toBe("TST");
     expect(parsed.candidates[0].relationshipType).toBe("supplier");
     expect(parsed.candidates[0].sources).toHaveLength(1);
+    expect(parsed.candidates[0].contractValueUsd).toBe(500000000);
+    expect(parsed.candidates[0].isGovernmentProcurement).toBe(true);
   });
 
   it("handles empty candidates array", () => {

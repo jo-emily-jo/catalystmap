@@ -68,6 +68,8 @@ interface RelationshipRow {
   score_version: number | null;
   hype_risk: string;
   score_breakdown: Record<string, number> | null;
+  contract_value_usd: number | null;
+  is_government_procurement: boolean;
   ai_assisted: boolean;
   related_companies: RelatedCompanyRow;
   sources: SourceRow[];
@@ -164,6 +166,8 @@ export function mapRelationship(row: RelationshipRow): Relationship {
     scoreVersion: row.score_version ?? 1,
     scoreBreakdown: breakdown ?? null,
     hypeRisk: row.hype_risk as HypeRisk,
+    contractValueUsd: row.contract_value_usd,
+    isGovernmentProcurement: row.is_government_procurement ?? false,
     sources: (row.sources ?? []).map(mapSource),
     isActive: row.is_active,
     aiAssisted: row.ai_assisted ?? false,

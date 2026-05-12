@@ -11,6 +11,8 @@ import { computeSourceQualityScore } from "./source-quality-score";
 import { computeRecencyScore } from "./recency-score";
 import { computeMomentumScore } from "./momentum-score";
 import { computeHypeRiskPenalty } from "./hype-risk-penalty";
+import { computeContractSizeBonus } from "./contract-size-bonus";
+import { computeGovernmentProcurementBonus } from "./government-procurement-bonus";
 
 interface ScoringInput {
   relationshipType: RelationshipType;
@@ -19,6 +21,8 @@ interface ScoringInput {
   sourceQualities: number[];
   lastVerifiedAt: Date;
   hypeRisk: HypeRisk;
+  contractValueUsd?: number | null;
+  isGovernmentProcurement?: boolean;
 }
 
 export function computeRelevanceScore(
@@ -33,14 +37,22 @@ export function computeRelevanceScore(
   const sourceQualityScore = computeSourceQualityScore(input.sourceQualities);
   const recencyScore = computeRecencyScore(input.lastVerifiedAt, now);
   const momentumScore = computeMomentumScore();
+  const contractSizeBonus = computeContractSizeBonus(
+    input.contractValueUsd ?? null
+  );
+  const governmentProcurementBonus = computeGovernmentProcurementBonus(
+    input.isGovernmentProcurement ?? false
+  );
   const hypeRiskPenalty = computeHypeRiskPenalty(input.hypeRisk);
 
   const subtotal =
     0.4 * directScore +
     0.2 * revenueExposureScore +
-    0.2 * sourceQualityScore +
+    0.15 * sourceQualityScore +
     0.1 * recencyScore +
-    0.1 * momentumScore;
+    0.05 * momentumScore +
+    contractSizeBonus +
+    governmentProcurementBonus;
 
   const final = Math.max(0, Math.min(100, subtotal - hypeRiskPenalty));
 
@@ -52,6 +64,8 @@ export function computeRelevanceScore(
       sourceQualityScore,
       recencyScore,
       momentumScore,
+      contractSizeBonus,
+      governmentProcurementBonus,
       hypeRiskPenalty,
       subtotal: Math.round(subtotal * 100) / 100,
       final: Math.round(final * 100) / 100,

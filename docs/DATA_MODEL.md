@@ -120,23 +120,25 @@ Indexes: `(ticker)`, `(sector)`.
 
 The heart of the data model. One row per (catalyst, related_company) pair.
 
-| Column                     | Type                         | Notes                                                                                                  |
-| -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `id`                       | uuid PK                      |                                                                                                        |
-| `catalyst_id`              | uuid FK → catalyst_companies |                                                                                                        |
-| `related_company_id`       | uuid FK → related_companies  |                                                                                                        |
-| `relationship_type`        | text NOT NULL                | enum: `investment`, `customer`, `supplier`, `partnership`, `infrastructure`, `thematic`, `speculative` |
-| `relationship_strength`    | text NOT NULL                | enum: `direct`, `indirect`, `speculative`                                                              |
-| `summary`                  | text NOT NULL                | 1–2 sentences for the table row                                                                        |
-| `revenue_exposure_pct`     | numeric(5,2)                 | Estimated % of related co.'s revenue tied to catalyst; nullable                                        |
-| `first_observed_at`        | date                         |                                                                                                        |
-| `last_verified_at`         | date NOT NULL                | Drives recency_score                                                                                   |
-| `is_active`                | boolean DEFAULT true         |                                                                                                        |
-| `relevance_score`          | numeric(5,2)                 | Computed; cached here for sort performance                                                             |
-| `score_version`            | int                          | Which scoring formula was used                                                                         |
-| `hype_risk`                | text NOT NULL DEFAULT 'low'  | enum: `low`, `medium`, `high`                                                                          |
-| `curator_notes`            | text                         | Internal — not shown publicly by default                                                               |
-| `created_at`, `updated_at` | timestamptz                  |                                                                                                        |
+| Column                      | Type                           | Notes                                                                                                  |
+| --------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `id`                        | uuid PK                        |                                                                                                        |
+| `catalyst_id`               | uuid FK → catalyst_companies   |                                                                                                        |
+| `related_company_id`        | uuid FK → related_companies    |                                                                                                        |
+| `relationship_type`         | text NOT NULL                  | enum: `investment`, `customer`, `supplier`, `partnership`, `infrastructure`, `thematic`, `speculative` |
+| `relationship_strength`     | text NOT NULL                  | enum: `direct`, `indirect`, `speculative`                                                              |
+| `summary`                   | text NOT NULL                  | 1–2 sentences for the table row                                                                        |
+| `revenue_exposure_pct`      | numeric(5,2)                   | Estimated % of related co.'s revenue tied to catalyst; nullable                                        |
+| `first_observed_at`         | date                           |                                                                                                        |
+| `last_verified_at`          | date NOT NULL                  | Drives recency_score                                                                                   |
+| `is_active`                 | boolean DEFAULT true           |                                                                                                        |
+| `relevance_score`           | numeric(5,2)                   | Computed; cached here for sort performance                                                             |
+| `score_version`             | int                            | Which scoring formula was used                                                                         |
+| `hype_risk`                 | text NOT NULL DEFAULT 'low'    | enum: `low`, `medium`, `high`                                                                          |
+| `curator_notes`             | text                           | Internal — not shown publicly by default                                                               |
+| `contract_value_usd`        | numeric(18,2)                  | Nullable. Known disclosed contract value in USD (e.g. SpaceX-NASA HLS = 2_900_000_000).                |
+| `is_government_procurement` | boolean NOT NULL DEFAULT false | Flag when the relationship is a government / agency procurement contract (DoD, NASA, ESA, etc.).       |
+| `created_at`, `updated_at`  | timestamptz                    |                                                                                                        |
 
 Unique constraint: `(catalyst_id, related_company_id)`.
 Indexes: `(catalyst_id, relevance_score DESC)`, `(related_company_id)`, `(is_active)`.
@@ -266,6 +268,8 @@ export interface Relationship {
   relevanceScore: number;
   scoreVersion: number;
   hypeRisk: HypeRisk;
+  contractValueUsd?: number | null;
+  isGovernmentProcurement: boolean;
   sources: Source[];
   isActive: boolean;
 }
@@ -293,6 +297,7 @@ export interface Source {
 5. `relationships`
 6. `sources`
 7. `score_snapshots`
+8. `0013_supply_chain_fields` — `contract_value_usd`, `is_government_procurement`
 
 Each migration is a separate SQL file in `/supabase/migrations/`.
 

@@ -16,6 +16,8 @@ describe("mapRelationship", () => {
     relevance_score: 62.4,
     score_version: 1,
     hype_risk: "medium",
+    contract_value_usd: null,
+    is_government_procurement: false,
     ai_assisted: false,
     score_breakdown: {
       directScore: 60,
@@ -23,10 +25,12 @@ describe("mapRelationship", () => {
       sourceQualityScore: 72,
       recencyScore: 80,
       momentumScore: 50,
+      contractSizeBonus: 0,
+      governmentProcurementBonus: 0,
       hypeRiskPenalty: 5,
       subtotal: 67.4,
       final: 62.4,
-      version: 1,
+      version: 2,
     },
     related_companies: {
       id: "rc-001",
@@ -131,7 +135,7 @@ describe("mapRelationship", () => {
     expect(result.scoreBreakdown?.hypeRiskPenalty).toBe(5);
     expect(result.scoreBreakdown?.subtotal).toBe(67.4);
     expect(result.scoreBreakdown?.final).toBe(62.4);
-    expect(result.scoreBreakdown?.version).toBe(1);
+    expect(result.scoreBreakdown?.version).toBe(2);
   });
 
   it("handles null score_breakdown", () => {
@@ -175,6 +179,8 @@ function makeRow(id: string, score: number) {
     relevance_score: score,
     score_version: 1,
     hype_risk: "low",
+    contract_value_usd: null,
+    is_government_procurement: false,
     ai_assisted: false,
     score_breakdown: null,
     related_companies: {

@@ -1,8 +1,10 @@
 # Relevance Scoring Model
 
-**Version:** 1
-**Constant:** `SCORING_VERSION = 1`
+**Version:** 2
+**Constant:** `SCORING_VERSION = 2`
 **Range:** Every score is clamped to `[0, 100]`.
+
+v2 reorients scoring around supply-chain confidence. Supplier and customer relationships now weight at the top tier; thematic and speculative relationships are sharply de-emphasized.
 
 This file is the **single source of truth** for how relevance scores are computed. Any change to the formula or weights must bump `SCORING_VERSION` and be reflected in `/lib/scoring/`.
 
@@ -16,14 +18,16 @@ All scoring functions are **pure** and **deterministic**: same inputs → same o
 positive =
     0.40 * direct_score
   + 0.20 * revenue_exposure_score
-  + 0.20 * source_quality_score
+  + 0.15 * source_quality_score
   + 0.10 * recency_score
-  + 0.10 * momentum_score
+  + 0.05 * momentum_score
+  + contract_size_bonus            (0–10)
+  + government_procurement_bonus   (0–3)
 
 final_score = clamp(positive - hype_risk_penalty, 0, 100)
 ```
 
-Weights sum to 1.0. The hype-risk **penalty** is subtracted after weighting, so it can push a score down but never inflate it.
+Weighted components sum to 0.90. The remaining 0–13 points come from additive bonuses for disclosed contract values and government procurement. The hype-risk **penalty** is subtracted after weighting and bonuses, so it can push a score down but never inflate it.
 
 ---
 
@@ -35,15 +39,15 @@ Driven by `relationship_type` × `relationship_strength`.
 
 | `relationship_type` | `direct` | `indirect` | `speculative` |
 | ------------------- | -------: | ---------: | ------------: |
-| `investment`        |      100 |         70 |            30 |
-| `customer`          |       90 |         60 |            25 |
-| `supplier`          |       90 |         60 |            25 |
+| `supplier`          |      100 |         70 |            30 |
+| `customer`          |      100 |         70 |            30 |
+| `infrastructure`    |       90 |         65 |            25 |
 | `partnership`       |       80 |         55 |            25 |
-| `infrastructure`    |       75 |         50 |            20 |
-| `thematic`          |       50 |         35 |            15 |
-| `speculative`       |       30 |         20 |            10 |
+| `investment`        |       80 |         55 |            25 |
+| `thematic`          |       30 |         20 |            10 |
+| `speculative`       |       20 |         15 |             5 |
 
-The matrix is a constant in `/lib/scoring/directScore.ts`.
+The matrix is a constant in `/lib/scoring/direct-score.ts`.
 
 ### 2.2 `revenue_exposure_score` — 0–100
 
@@ -123,6 +127,24 @@ For MVP, the curator sets `hype_risk` manually. Suggested heuristics (informatio
 - 12-month price rise > 50% **and** strength is `indirect` → `medium`
 - otherwise → `low`
 
+### 2.7 `contract_size_bonus` — 0–10
+
+Only applies when `contract_value_usd` is not null:
+
+| `contract_value_usd` | bonus |
+| -------------------- | ----: |
+| `>= 1_000_000_000`   |    10 |
+| `>= 100_000_000`     |     5 |
+| `>= 10_000_000`      |     2 |
+| else (or null)       |     0 |
+
+### 2.8 `government_procurement_bonus` — 0–3
+
+| `is_government_procurement` | bonus |
+| --------------------------- | ----: |
+| `true`                      |     3 |
+| `false`                     |     0 |
+
 ---
 
 ## 3. Worked examples
@@ -131,57 +153,85 @@ For MVP, the curator sets `hype_risk` manually. Suggested heuristics (informatio
 
 Inputs:
 
-- type: `investment`, strength: `direct` → direct_score = 100
+- type: `investment`, strength: `direct` → direct_score = 80
 - revenue_exposure_pct: ~2% → revenue_exposure_score = 40
 - sources: `official_announcement` (90), `sec_filing` (100) → base 100, agreement_bonus min(10, 2\*2)=4, capped at 100
 - last_verified_at: 30 days ago → recency_score = 100
 - momentum_score = 50 (MVP default)
+- contract_value_usd: null → contract_size_bonus = 0
+- is_government_procurement: false → government_procurement_bonus = 0
 - hype_risk: `low` → penalty = 0
 
 ```
-positive = 0.4*100 + 0.2*40 + 0.2*100 + 0.1*100 + 0.1*50
-        = 40 + 8 + 20 + 10 + 5
-        = 83
-final   = clamp(83 - 0) = 83
+positive = 0.4*80 + 0.2*40 + 0.15*100 + 0.1*100 + 0.05*50 + 0 + 0
+        = 32 + 8 + 15 + 10 + 2.5 + 0 + 0
+        = 67.5
+final   = clamp(67.5 - 0) = 67.5
 ```
 
-### Example B — Infrastructure/thematic relationship, weaker evidence
+### Example B — Infrastructure relationship, weaker evidence
 
 Inputs:
 
-- type: `infrastructure`, strength: `indirect` → direct_score = 50
+- type: `infrastructure`, strength: `indirect` → direct_score = 65
 - revenue_exposure_pct: null → revenue_exposure_score = 30
 - sources: `analyst_report` (70) → base 70, agreement_bonus 2, total 72
 - last_verified_at: 120 days ago → recency_score = 80
 - momentum_score = 50
+- contract_value_usd: null → 0
+- is_government_procurement: false → 0
 - hype_risk: `medium` → penalty = 5
 
 ```
-positive = 0.4*50 + 0.2*30 + 0.2*72 + 0.1*80 + 0.1*50
-        = 20 + 6 + 14.4 + 8 + 5
-        = 53.4
-final   = clamp(53.4 - 5) = 48.4 → 48 (rounded for display)
+positive = 0.4*65 + 0.2*30 + 0.15*72 + 0.1*80 + 0.05*50 + 0 + 0
+        = 26 + 6 + 10.8 + 8 + 2.5
+        = 53.3
+final   = clamp(53.3 - 5) = 48.3
 ```
 
 ### Example C — Speculative thematic with hype risk
 
 Inputs:
 
-- type: `thematic`, strength: `speculative` → direct_score = 15
+- type: `thematic`, strength: `speculative` → direct_score = 10
 - revenue_exposure_pct: null → 30
 - sources: `blog` (30), `community` (15) → base 30, agreement_bonus 0 → 30
 - last_verified_at: 400 days ago → recency_score = 30
 - momentum_score = 50
+- contract_value_usd: null → 0
+- is_government_procurement: false → 0
 - hype_risk: `high` → penalty = 15
 
 ```
-positive = 0.4*15 + 0.2*30 + 0.2*30 + 0.1*30 + 0.1*50
-        = 6 + 6 + 6 + 3 + 5
-        = 26
-final   = clamp(26 - 15) = 11
+positive = 0.4*10 + 0.2*30 + 0.15*30 + 0.1*30 + 0.05*50 + 0 + 0
+        = 4 + 6 + 4.5 + 3 + 2.5
+        = 20
+final   = clamp(20 - 15) = 5
 ```
 
-A relationship like this would appear near the bottom of the sorted table and is appropriately flagged.
+A thematic-speculative relationship now scores 5 under v2 (was 11 under v1), reflecting the de-emphasis of thematic exposure.
+
+### Example D — Supplier with disclosed contract value (v2 showcase)
+
+Inputs:
+
+- type: `supplier`, strength: `direct` → direct_score = 100
+- revenue_exposure_pct: 15% → revenue_exposure_score = 80
+- sources: `sec_filing` (100), `earnings_call` (95) → base 100, agreement_bonus min(10, 2\*2)=4, capped at 100
+- last_verified_at: 60 days ago → recency_score = 100
+- momentum_score = 50
+- contract_value_usd: 500_000_000 → contract_size_bonus = 5
+- is_government_procurement: true → government_procurement_bonus = 3
+- hype_risk: `low` → penalty = 0
+
+```
+positive = 0.4*100 + 0.2*80 + 0.15*100 + 0.1*100 + 0.05*50 + 5 + 3
+        = 40 + 16 + 15 + 10 + 2.5 + 5 + 3
+        = 91.5
+final   = clamp(91.5 - 0) = 91.5
+```
+
+A confirmed supplier with a $500M government contract and strong evidence achieves 91.5 — the highest possible tier under v2.
 
 ---
 
@@ -222,7 +272,7 @@ This is generated directly from the `breakdown` JSON stored in `score_snapshots`
 
 ## 6. Versioning policy
 
-- This document describes **version 1** of the scoring model.
+- This document describes **version 2** of the scoring model.
 - Any change to weights, component formulas, or matrix values requires:
   1. Updating this document.
   2. Incrementing `SCORING_VERSION` in `/lib/scoring/version.ts`.
@@ -235,11 +285,13 @@ This is generated directly from the `breakdown` JSON stored in `score_snapshots`
 
 The unit test suite must include at minimum:
 
-1. Direct matrix lookup for every (type, strength) pair.
+1. Direct matrix lookup for every (type, strength) pair — **v2 values**.
 2. Revenue exposure: each piecewise boundary (0, 0.5, 1, 4, 5, 14, 15, 29, 30, 100, null).
 3. Source quality: single source of each type; multi-source agreement bonus capped at +10; all sources below 70 yields zero bonus.
 4. Recency: day-89, day-90, day-91, day-179, day-180, day-181, day-364, day-365, day-366, day-731.
 5. Hype-risk penalty for each enum value.
-6. Full orchestrator with Example A, B, C inputs → expected final scores.
+6. Full orchestrator with Example A, B, C, D inputs → expected final scores.
 7. Clamp behavior: contrived inputs that would push below 0 are returned as 0.
 8. Determinism: 100 random inputs hashed → same hash on two consecutive runs.
+9. `contract_size_bonus`: each boundary (null, 0, 1, 9_999_999, 10_000_000, 99_999_999, 100_000_000, 999_999_999, 1_000_000_000, 5_000_000_000).
+10. `government_procurement_bonus`: both boolean values.

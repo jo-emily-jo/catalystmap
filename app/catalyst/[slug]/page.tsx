@@ -43,9 +43,13 @@ export default async function CatalystPage({ params }: PageProps) {
       <CatalystHeader catalyst={catalyst} />
 
       <div className="mt-8">
-        <h2 className="mb-4 text-base font-medium text-[--foreground]">
-          Related public companies
+        <h2 className="text-base font-medium text-[--foreground]">
+          Public-market counterparties
         </h2>
+        <p className="mb-4 mt-1 text-xs text-[--foreground-secondary]">
+          Suppliers, contractors, infrastructure providers, and value-chain
+          beneficiaries with verifiable relationships.
+        </p>
         {relationships.length > 0 ? (
           <RelatedCompanyTable relationships={relationships} />
         ) : (

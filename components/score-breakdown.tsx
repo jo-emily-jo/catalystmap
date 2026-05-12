@@ -2,7 +2,7 @@
 
 import type { ScoreBreakdown } from "@/lib/types";
 
-const COMPONENTS: {
+const WEIGHTED_COMPONENTS: {
   label: string;
   key: keyof ScoreBreakdown;
   weight: string;
@@ -18,11 +18,11 @@ const COMPONENTS: {
   {
     label: "Source quality",
     key: "sourceQualityScore",
-    weight: "20%",
-    weightNum: 0.2,
+    weight: "15%",
+    weightNum: 0.15,
   },
   { label: "Recency", key: "recencyScore", weight: "10%", weightNum: 0.1 },
-  { label: "Momentum", key: "momentumScore", weight: "10%", weightNum: 0.1 },
+  { label: "Momentum", key: "momentumScore", weight: "5%", weightNum: 0.05 },
 ];
 
 export function ScoreBreakdownPanel({
@@ -36,7 +36,7 @@ export function ScoreBreakdownPanel({
         Score: {breakdown.final}
       </div>
       <div className="border-t border-[--border] pt-1">
-        {COMPONENTS.map(({ label, key, weight, weightNum }) => {
+        {WEIGHTED_COMPONENTS.map(({ label, key, weight, weightNum }) => {
           const value = breakdown[key] as number;
           const weighted = (value * weightNum).toFixed(1);
           return (
@@ -49,6 +49,31 @@ export function ScoreBreakdownPanel({
           );
         })}
       </div>
+      {(breakdown.contractSizeBonus > 0 ||
+        breakdown.governmentProcurementBonus > 0) && (
+        <div className="border-t border-[--border] pt-1">
+          {breakdown.contractSizeBonus > 0 && (
+            <div className="flex justify-between py-0.5">
+              <span className="text-[--foreground-secondary]">
+                Contract size
+              </span>
+              <span className="text-[--foreground]">
+                +{breakdown.contractSizeBonus}
+              </span>
+            </div>
+          )}
+          {breakdown.governmentProcurementBonus > 0 && (
+            <div className="flex justify-between py-0.5">
+              <span className="text-[--foreground-secondary]">
+                Gov procurement
+              </span>
+              <span className="text-[--foreground]">
+                +{breakdown.governmentProcurementBonus}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
       <div className="border-t border-[--border] pt-1">
         <div className="flex justify-between py-0.5">
           <span className="text-[--foreground-secondary]">Subtotal</span>
@@ -70,6 +95,10 @@ export function ScoreBreakdownPanel({
         </div>
         <div className="pt-1 font-sans text-[10px] text-[--foreground-secondary]">
           Scoring version: v{breakdown.version}
+        </div>
+        <div className="font-sans text-[10px] text-[--foreground-secondary]">
+          This score measures relationship strength and evidence quality, not
+          investment quality.
         </div>
       </div>
     </div>

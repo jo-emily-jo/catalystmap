@@ -41,6 +41,8 @@ async function main() {
       (s: { source_quality: number }) => s.source_quality
     );
 
+    const oldScore = rel.relevance_score;
+
     const { score, breakdown } = computeRelevanceScore(
       {
         relationshipType: rel.relationship_type,
@@ -49,6 +51,8 @@ async function main() {
         sourceQualities,
         lastVerifiedAt: new Date(rel.last_verified_at),
         hypeRisk: rel.hype_risk,
+        contractValueUsd: rel.contract_value_usd,
+        isGovernmentProcurement: rel.is_government_procurement,
       },
       now
     );
@@ -67,6 +71,9 @@ async function main() {
       console.error(`  Failed to update ${rel.id}: ${updateError.message}`);
       continue;
     }
+    console.log(
+      `  ${rel.relationship_type}/${rel.relationship_strength}: ${oldScore} → ${score} (${score > oldScore ? "+" : ""}${(score - (oldScore ?? 0)).toFixed(1)})`
+    );
     updated++;
 
     // Append score snapshot

@@ -44,6 +44,8 @@ export interface ResearchCandidate {
     title: string;
   }[];
   hypeRisk: string;
+  contractValueUsd?: number | null;
+  isGovernmentProcurement?: boolean;
 }
 
 export interface ResearchResult {
@@ -69,6 +71,18 @@ Quality rules:
    - high: public company's price has risen >100% in last 12 months AND relationship is speculative
    - medium: >50% rise AND relationship is indirect
    - low: otherwise
+
+Prioritization (most important to least):
+1. Suppliers (confirmed in SEC filings, supplier disclosures, or earnings calls)
+2. Customers (with disclosed revenue exposure)
+3. Infrastructure providers (cloud, data center, networking, fabrication)
+4. Disclosed partnerships (joint press releases)
+5. Equity investors (with public position disclosures)
+6. Thematic / value-chain inference — clearly label as \`thematic\` with hedging language
+
+Avoid \`thematic\` and \`speculative\` relationship types unless no stronger relationship exists. Quality over quantity.
+
+When known, include \`contractValueUsd\` (e.g. SpaceX-NASA Artemis HLS = 2900000000) and \`isGovernmentProcurement: true\` for DoD / NASA / ESA / equivalent contracts.
 
 Output: a single JSON object wrapped in <json>...</json> tags. No prose before or after, no markdown code fences.`;
 
@@ -113,7 +127,9 @@ Return candidates as a JSON object inside <json>...</json> tags matching this sc
           "title": "Descriptive title of the source"
         }
       ],
-      "hypeRisk": "low|medium|high"
+      "hypeRisk": "low|medium|high",
+      "contractValueUsd": "number or null — disclosed contract value in USD if known",
+      "isGovernmentProcurement": "true if DoD/NASA/ESA/equivalent, false otherwise"
     }
   ],
   "note": "Optional. Explain if fewer than 5 candidates were identified."

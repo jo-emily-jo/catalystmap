@@ -59,6 +59,8 @@ export async function recomputeAndSaveScore(
       sourceQualities,
       lastVerifiedAt: new Date(rel.last_verified_at),
       hypeRisk: rel.hype_risk,
+      contractValueUsd: rel.contract_value_usd,
+      isGovernmentProcurement: rel.is_government_procurement,
     },
     new Date()
   );
@@ -97,6 +99,8 @@ export interface CreateRelationshipInput {
   revenueExposurePct?: number | null;
   lastVerifiedAt: string;
   hypeRisk: HypeRisk;
+  contractValueUsd?: number | null;
+  isGovernmentProcurement?: boolean;
   aiAssisted?: boolean;
 }
 
@@ -115,6 +119,8 @@ export async function createRelationship(
       revenue_exposure_pct: input.revenueExposurePct ?? null,
       last_verified_at: input.lastVerifiedAt,
       hype_risk: input.hypeRisk,
+      contract_value_usd: input.contractValueUsd ?? null,
+      is_government_procurement: input.isGovernmentProcurement ?? false,
       ai_assisted: input.aiAssisted ?? false,
     })
     .select("id")

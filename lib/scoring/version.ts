@@ -1,1 +1,1 @@
-export const SCORING_VERSION = 1;
+export const SCORING_VERSION = 2;

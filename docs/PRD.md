@@ -8,9 +8,7 @@
 
 ## 1. Vision
 
-A research platform that maps **catalyst companies** — companies that are currently driving major market narratives — to **publicly traded companies** that have evidence-based exposure to them.
-
-Users can quickly answer: _"This company / theme is having a moment. Which public stocks actually have a defensible claim to that exposure, and how strong is the claim?"_
+A supply-chain and contract intelligence tool that maps high-attention catalyst companies (e.g. SpaceX, Anthropic, SK Hynix, NVIDIA) to their publicly traded **suppliers, contractors, infrastructure providers, and value-chain beneficiaries** — with verifiable, source-cited relationships. Users come to answer: "Which public companies are in this catalyst's supply chain or counterparty graph?"
 
 This is a research and education tool. It is **not** a recommendation engine, not financial advice, and not a trading product.
 
@@ -23,6 +21,7 @@ This is a research and education tool. It is **not** a recommendation engine, no
 - Retail investors struggle to distinguish rigorous exposure from speculative theme play.
 - Existing options are either superficial blog-style "related stocks" lists (no sourcing, no scoring) or paid institutional tools (Bloomberg, FactSet).
 - Generic AI search tends to produce confident but unsourced or hallucinated claims about which stocks benefit from what.
+- Existing financial tools (Yahoo Finance, Finviz, Stock Rover, Pitchbook) excel at valuation and screening. None answer the question "Who is in this catalyst's supply chain?" — especially when the catalyst is private (SpaceX, Anthropic) or foreign (SK Hynix, TSMC). Retail investors trying to gain indirect exposure must currently cobble this together from earnings calls, SEC filings, supplier disclosures, and analyst notes. CatalystMap consolidates that work into a single, evidenced graph.
 
 ---
 
@@ -44,12 +43,13 @@ The first version is **manually curated**, with AI used as a research aide for t
 
 ## 4. Target users
 
-| Persona                                | Primary need                                                     |
-| -------------------------------------- | ---------------------------------------------------------------- |
-| Retail investor doing serious research | Find rigorously sourced exposure to a theme                      |
-| Junior analyst / PM                    | Map an investment thesis quickly                                 |
-| Business / finance student             | Learn how themes translate to investable names                   |
-| Builder (Emily)                        | Portfolio piece demonstrating product, data, and design thinking |
+| Persona                                                                   | Primary need                                                                                                                |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Retail investor doing serious research                                    | Find rigorously sourced exposure to a theme                                                                                 |
+| Junior analyst / PM                                                       | Map an investment thesis quickly                                                                                            |
+| Business / finance student                                                | Learn how themes translate to investable names                                                                              |
+| Builder (Emily)                                                           | Portfolio piece demonstrating product, data, and design thinking                                                            |
+| Retail investor seeking indirect exposure to private or foreign catalysts | "How do I own a slice of SpaceX without being SpaceX?" / "Which TSMC suppliers do I already own through my US-listed ETFs?" |
 
 ---
 
@@ -78,6 +78,16 @@ A URL with a quality tier (SEC filing, earnings call, official press, top-tier m
 ### Relevance score
 
 A 0–100 composite computed deterministically from a relationship's properties and sources. Defined in `SCORING.md`.
+
+### Relationship type hierarchy (confidence tiers)
+
+| Tier                   | Types                           | Description                                                                       |
+| ---------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
+| Confirmed counterparty | `supplier`, `customer`          | Disclosed in SEC filings, earnings calls, or supplier disclosures                 |
+| Confirmed financial    | `investment`                    | Disclosed equity or debt relationship                                             |
+| Disclosed partnership  | `partnership`, `infrastructure` | Joint press release, official announcement, or public infrastructure relationship |
+| Inferred exposure      | `thematic`                      | Same industry or value chain, no specific counterparty link                       |
+| Speculative            | `speculative`                   | Community / analyst conjecture without an official source                         |
 
 ---
 
@@ -147,6 +157,10 @@ Password-protected route for the maintainer.
 - Does not predict price movements
 - Documents existing, evidenced relationships — does not speculate
 - Does not auto-discover catalysts in v1 (humans choose what is a catalyst)
+- **Not a stock screener.** We do not filter by P/E, market cap, dividend yield, or other valuation metrics.
+- **Not a fundamental analysis tool.** We do not display financial statements, ratios, or DCF models.
+- **Not a price chart / technical analysis surface.** No candlesticks, no indicators.
+- **Not a portfolio tracker.** We do not maintain user positions.
 
 ---
 

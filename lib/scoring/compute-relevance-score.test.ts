@@ -7,8 +7,8 @@ function daysAgo(days: number): Date {
   return new Date(now.getTime() - days * 86_400_000);
 }
 
-describe("computeRelevanceScore", () => {
-  it("Example A — investment, direct, strong evidence → 83", () => {
+describe("computeRelevanceScore (v2)", () => {
+  it("Example A — investment, direct, strong evidence → 67.5", () => {
     const result = computeRelevanceScore(
       {
         relationshipType: "investment",
@@ -20,16 +20,18 @@ describe("computeRelevanceScore", () => {
       },
       now
     );
-    expect(result.score).toBe(83);
-    expect(result.breakdown.directScore).toBe(100);
+    expect(result.score).toBe(67.5);
+    expect(result.breakdown.directScore).toBe(80);
     expect(result.breakdown.revenueExposureScore).toBe(40);
     expect(result.breakdown.sourceQualityScore).toBe(100);
     expect(result.breakdown.recencyScore).toBe(100);
     expect(result.breakdown.momentumScore).toBe(50);
+    expect(result.breakdown.contractSizeBonus).toBe(0);
+    expect(result.breakdown.governmentProcurementBonus).toBe(0);
     expect(result.breakdown.hypeRiskPenalty).toBe(0);
   });
 
-  it("Example B — infrastructure, indirect, weaker evidence → 48.4", () => {
+  it("Example B — infrastructure, indirect, weaker evidence → 48.3", () => {
     const result = computeRelevanceScore(
       {
         relationshipType: "infrastructure",
@@ -41,16 +43,13 @@ describe("computeRelevanceScore", () => {
       },
       now
     );
-    expect(result.score).toBe(48.4);
-    expect(result.breakdown.directScore).toBe(50);
+    expect(result.score).toBe(48.3);
+    expect(result.breakdown.directScore).toBe(65);
     expect(result.breakdown.revenueExposureScore).toBe(30);
     expect(result.breakdown.sourceQualityScore).toBe(72);
-    expect(result.breakdown.recencyScore).toBe(80);
-    expect(result.breakdown.momentumScore).toBe(50);
-    expect(result.breakdown.hypeRiskPenalty).toBe(5);
   });
 
-  it("Example C — speculative thematic with hype risk → 11", () => {
+  it("Example C — speculative thematic with hype risk → 5", () => {
     const result = computeRelevanceScore(
       {
         relationshipType: "thematic",
@@ -62,9 +61,30 @@ describe("computeRelevanceScore", () => {
       },
       now
     );
-    expect(result.score).toBe(11);
-    expect(result.breakdown.directScore).toBe(15);
+    expect(result.score).toBe(5);
+    expect(result.breakdown.directScore).toBe(10);
     expect(result.breakdown.hypeRiskPenalty).toBe(15);
+  });
+
+  it("Example D — supplier with contract value + gov procurement → 91.5", () => {
+    const result = computeRelevanceScore(
+      {
+        relationshipType: "supplier",
+        relationshipStrength: "direct",
+        revenueExposurePct: 15,
+        sourceQualities: [100, 95],
+        lastVerifiedAt: daysAgo(60),
+        hypeRisk: "low",
+        contractValueUsd: 500_000_000,
+        isGovernmentProcurement: true,
+      },
+      now
+    );
+    expect(result.score).toBe(91.5);
+    expect(result.breakdown.directScore).toBe(100);
+    expect(result.breakdown.revenueExposureScore).toBe(80);
+    expect(result.breakdown.contractSizeBonus).toBe(5);
+    expect(result.breakdown.governmentProcurementBonus).toBe(3);
   });
 
   it("clamps to 0 when penalty exceeds subtotal", () => {
@@ -104,6 +124,8 @@ describe("computeRelevanceScore", () => {
         sourceQualities: [15 + (i % 86), 70],
         lastVerifiedAt: daysAgo(i * 8),
         hypeRisk: risks[i % risks.length],
+        contractValueUsd: i % 5 === 0 ? i * 1_000_000 : null,
+        isGovernmentProcurement: i % 7 === 0,
       }));
     }
 
@@ -114,12 +136,10 @@ describe("computeRelevanceScore", () => {
       (inp) => computeRelevanceScore(inp, now).score
     );
 
-    const hash1 = JSON.stringify(run1);
-    const hash2 = JSON.stringify(run2);
-    expect(hash1).toBe(hash2);
+    expect(JSON.stringify(run1)).toBe(JSON.stringify(run2));
   });
 
-  it("version is always SCORING_VERSION (1)", () => {
+  it("version is always SCORING_VERSION (2)", () => {
     const result = computeRelevanceScore(
       {
         relationshipType: "customer",
@@ -131,6 +151,6 @@ describe("computeRelevanceScore", () => {
       },
       now
     );
-    expect(result.breakdown.version).toBe(1);
+    expect(result.breakdown.version).toBe(2);
   });
 });

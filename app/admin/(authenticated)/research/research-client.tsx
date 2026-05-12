@@ -88,6 +88,12 @@ export function ResearchClient({ catalysts }: ResearchClientProps) {
     relFormData.set("summary", candidate.evidenceSummary);
     relFormData.set("lastVerifiedAt", new Date().toISOString().split("T")[0]);
     relFormData.set("hypeRisk", candidate.hypeRisk);
+    if (candidate.contractValueUsd != null) {
+      relFormData.set("contractValueUsd", String(candidate.contractValueUsd));
+    }
+    if (candidate.isGovernmentProcurement) {
+      relFormData.set("isGovernmentProcurement", "true");
+    }
     relFormData.set("aiAssisted", "true");
     relFormData.set("sources", JSON.stringify(sources));
 
