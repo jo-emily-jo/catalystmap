@@ -53,7 +53,7 @@ export default async function ThemeDetailPage({ params }: PageProps) {
 
         {isEmpty ? (
           <div className="mt-8">
-            <ThemeEmptyState theme={theme} />
+            <ThemeEmptyState />
           </div>
         ) : (
           <div className="mt-8">

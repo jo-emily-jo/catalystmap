@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getCatalystBySlug } from "@/lib/db/catalysts";
 import { listRelationshipsByCatalyst } from "@/lib/db/relationships";
 import { CatalystHeader } from "@/components/catalyst-header";
+import { NetworkGraph } from "@/components/network-graph";
 import { RelatedCompanyTable } from "@/components/related-company-table";
 import { EmptyState } from "@/components/empty-state";
 import Link from "next/link";
@@ -41,6 +42,15 @@ export default async function CatalystPage({ params }: PageProps) {
       </Link>
 
       <CatalystHeader catalyst={catalyst} />
+
+      {relationships.length > 0 && (
+        <div className="mt-8">
+          <NetworkGraph
+            catalystName={catalyst.name}
+            relationships={relationships}
+          />
+        </div>
+      )}
 
       <div className="mt-8">
         <h2 className="text-base font-medium text-[--foreground]">

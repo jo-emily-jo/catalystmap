@@ -40,6 +40,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-6">
+      <h1 className="sr-only">Admin login</h1>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Admin login</CardTitle>

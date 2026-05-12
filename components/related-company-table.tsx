@@ -6,7 +6,7 @@ import type {
   RelationshipStrength,
   RelationshipType,
 } from "@/lib/types";
-import { RelatedCompanyRow } from "./related-company-row";
+import { RelatedCompanyRow, RelatedCompanyCard } from "./related-company-row";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
 type SortField = "score" | "type" | "strength" | "hypeRisk" | "ticker" | "name";
@@ -138,7 +138,15 @@ export function RelatedCompanyTable({
         </span>
       </div>
 
-      <div className="overflow-x-auto rounded border border-[--border] bg-[--background]">
+      {/* Mobile: card layout */}
+      <div className="space-y-3 md:hidden">
+        {sorted.map((r) => (
+          <RelatedCompanyCard key={r.id} relationship={r} />
+        ))}
+      </div>
+
+      {/* Desktop: table layout */}
+      <div className="hidden overflow-x-auto rounded border border-[--border] bg-[--background] md:block">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-[--border] bg-[--background-secondary] text-xs font-normal text-[--foreground-secondary]">
             <tr>

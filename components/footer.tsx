@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Footer() {
   return (
     <footer className="border-t border-[--border] bg-[--background] px-6 py-4 text-center text-xs text-[--foreground-secondary]">
@@ -7,6 +9,11 @@ export function Footer() {
       </p>
       <p className="mt-1">
         This is supply-chain research, not stock recommendations.
+      </p>
+      <p className="mt-2">
+        <Link href="/about" className="text-accent hover:underline">
+          About
+        </Link>
       </p>
     </footer>
   );

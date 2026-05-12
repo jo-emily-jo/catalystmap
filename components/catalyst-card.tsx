@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { CatalystCompany } from "@/lib/types";
+import { getBadgeLabel, shouldShowTicker } from "./catalyst-card-utils";
 
 export function CatalystCard({ catalyst }: { catalyst: CatalystCompany }) {
   return (
@@ -16,7 +17,7 @@ export function CatalystCard({ catalyst }: { catalyst: CatalystCompany }) {
               <h3 className="text-base font-medium text-[--foreground]">
                 {catalyst.name}
               </h3>
-              {catalyst.isPublic && catalyst.ticker && (
+              {shouldShowTicker(catalyst.isPublic, catalyst.ticker) && (
                 <span className="rounded bg-[--background-secondary] px-1.5 py-0.5 font-mono text-xs text-[--foreground-secondary]">
                   {catalyst.ticker}
                 </span>
@@ -28,7 +29,7 @@ export function CatalystCard({ catalyst }: { catalyst: CatalystCompany }) {
                     : "bg-gray-50 text-gray-600"
                 }`}
               >
-                {catalyst.isPublic ? "Public" : "Private"}
+                {getBadgeLabel(catalyst.isPublic)}
               </span>
             </div>
             <ChevronRight className="h-4 w-4 text-[--foreground-secondary]" />

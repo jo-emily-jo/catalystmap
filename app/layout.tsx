@@ -8,7 +8,16 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "CatalystMap",
   description:
-    "Research tool mapping catalyst companies to publicly traded companies with evidence-based exposure.",
+    "Map the supply chain of major catalyst companies. Identify publicly traded suppliers, contractors, and infrastructure providers with evidence-based relationships.",
+  metadataBase: new URL("https://getcatalystmap.com"),
+  openGraph: {
+    title: "CatalystMap",
+    description:
+      "Map the supply chain of major catalyst companies. Identify publicly traded suppliers, contractors, and infrastructure providers.",
+    url: "https://getcatalystmap.com",
+    siteName: "CatalystMap",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

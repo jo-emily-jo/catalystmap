@@ -17,7 +17,11 @@ export function ScoreBadge({
 }) {
   const display = Math.round(score);
   const badge = (
-    <span className="inline-block min-w-[2.5rem] cursor-pointer rounded bg-indigo-50 px-2 py-0.5 text-center font-mono text-xs font-medium text-indigo-700">
+    <span
+      role="button"
+      tabIndex={0}
+      className="inline-block min-w-[2.5rem] cursor-pointer rounded bg-indigo-50 px-2 py-0.5 text-center font-mono text-xs font-medium text-indigo-700"
+    >
       {display}
     </span>
   );
@@ -26,7 +30,9 @@ export function ScoreBadge({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>{badge}</PopoverTrigger>
+      <PopoverTrigger asChild aria-label="View score breakdown">
+        {badge}
+      </PopoverTrigger>
       <PopoverContent align="start" className="w-64">
         <ScoreBreakdownPanel breakdown={breakdown} />
       </PopoverContent>

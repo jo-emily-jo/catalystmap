@@ -12,7 +12,10 @@ export function RelatedCompanyRow({
   const latestSource = relationship.sources[0];
 
   return (
-    <tr className="border-t border-[--border] transition-colors hover:bg-[--background-secondary]">
+    <tr
+      id={`rel-${relationship.id}`}
+      className="border-t border-[--border] transition-colors hover:bg-[--background-secondary]"
+    >
       <td className="px-3 py-3 text-sm font-medium text-[--foreground]">
         {rc.name}
       </td>
@@ -53,5 +56,53 @@ export function RelatedCompanyRow({
         )}
       </td>
     </tr>
+  );
+}
+
+export function RelatedCompanyCard({
+  relationship,
+}: {
+  relationship: Relationship;
+}) {
+  const rc = relationship.relatedCompany;
+  const latestSource = relationship.sources[0];
+
+  return (
+    <div
+      id={`rel-${relationship.id}`}
+      className="rounded border border-[--border] bg-[--background] p-4"
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <span className="text-sm font-medium text-[--foreground]">
+            {rc.name}
+          </span>
+          <span className="ml-2 font-mono text-xs text-[--foreground-secondary]">
+            {rc.ticker}
+          </span>
+        </div>
+        <ScoreBadge
+          score={relationship.relevanceScore}
+          breakdown={relationship.scoreBreakdown}
+        />
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <RelationshipTag type={relationship.relationshipType} />
+        <span className="text-xs capitalize text-[--foreground-secondary]">
+          {relationship.relationshipStrength}
+        </span>
+        <HypeRiskIndicator level={relationship.hypeRisk} />
+      </div>
+      {latestSource && (
+        <a
+          href={latestSource.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-block text-xs text-accent hover:underline"
+        >
+          Source
+        </a>
+      )}
+    </div>
   );
 }
